@@ -215,4 +215,4 @@ An object will remain on the memory heap until it's no more reachable; when one 
 
 > An object sits on the heap and does not have a name. Therefore, you have no way to access an object except through a reference. Objects come in all different shapes and sizes and consume varying amounts of memory. An object cannot be assigned to another object, and an object cannot be passed to a method or returned from a method. It is the object that gets garbage collected, not its reference.
 
-![Reference vs Object](./refvsobj.png)
+![Reference vs Object](./img/refvsobj.png)
