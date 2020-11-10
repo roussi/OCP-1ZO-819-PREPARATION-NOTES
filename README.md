@@ -11,19 +11,19 @@ This repository contains notes about OCA 1ZO-808 and OCP 1ZO-819 certifications,
 
 ## Notes
 
-## Chapters
+## Chapter 1: History
 
-### Chapter 1
+Will right this later
 
-### Chapter 2: Java building blocks "you have to learn to walk before you can run"
+## Chapter 2: Java building blocks "you have to learn to walk before you can run"
 
-#### Constructors
+### Constructors
 A constructor allow us to create instance object for a given class. There are two rules that a constructor should match :
     1. the name of the constructor matches the name of the class.
     2. there’s no return type
 The compiler provide a "default" constructor that do nothing ! 
 
-#### Instance initializers
+### Instance initializers
 Is a block {} that appears *outside* a method, example : 
 
 ```java
@@ -44,7 +44,7 @@ public class Post {
 Instance initializers are executed before the main method.
 Any variable that is declared inside a block will not be accessible from outside.
 
-#### Static blocks
+### Static blocks
 Are blocks {} that are prefixed with static, at class level, theys are executed before anything else on the class. Exemple : 
 
 ```java
@@ -70,17 +70,17 @@ public class Test {
 
 ```
 
-#### Order of initialization
+### Order of initialization
     1. Static blocks 
     2. Field and initializer blocks (in the order in which they appear in the file).
     3. Constructor
 
-#### Data types
+### Data types
 Java support two types of data: 
     * primitive types.
     * reference types
 
-##### Primitive types
+#### Primitive types
 Java has 8 built-in data-types (the Java primitive types).
 A primitive is just a single value in memory, such as number or character.
 
@@ -103,10 +103,10 @@ A primitive is just a single value in memory, such as number or character.
 int million = 1_000_000;
 ```
 
-##### Reference types
+#### Reference types
 A reference refers to an object, unlike primitives references do not hold the value of the object they refer to in memory. Instead a reference is like a pointer that stores the memory address where the object is located.
 
-##### Identifiers ( variable names ) naming rules
+#### Identifiers ( variable names ) naming rules
 an identifier is the name of a variable, it should respect some naming rules, such as :
 
     * identifiers must begin with a letter, a $ symbol, or a _ symbol.
@@ -116,7 +116,7 @@ an identifier is the name of a variable, it should respect some naming rules, su
 
 By convention java use camelCase notation for naming variables; like `int studentNumber;` you can also use snake_cases for constant ( static final ) and enum variable names.
 
-##### Initializing variables
+#### Initializing variables
 You can declare & initialize variables in the same line, the only condition is that theys should have the same type. 
 Also know that the compiler will not let you use a variable that has not been initialized. Example : 
 
@@ -131,15 +131,15 @@ This will declare 3 variables but only one (name3) is initialized.
 int number = 3, String name = "Luffy";
 ```
 
-##### Local variables
+#### Local variables
 A local variable is a variable defined within : constructor, methods, or initializer block. local variables do not have a default value and must be initialized before use.
 
-##### Instance variables vs class variables
+#### Instance variables vs class variables
 
 - Instance variables often called field , is a value defined within a specific instance of an object.
 - Class variables are defined in class level, and accessible from outside, thus aren't related to an specific instance of the class => they are marked with `static` keyword.
 
-##### Default values
+#### Default values
 
 | Variable type |   Default init value |
 | ------ | ------ |
@@ -149,7 +149,7 @@ A local variable is a variable defined within : constructor, methods, or initial
 |   float, double |   0.0   |
 |   All object references |   null   |
 
-##### The var keyword (local variable type inference)
+### The var keyword (local variable type inference)
 Java 10 has introduced the `var` keyword, it replace **local variables** (only local variables) under certain conditions, example : 
 
 ```java
@@ -177,7 +177,7 @@ what is not valid with `var`:
 ```
 The following, is a valid usage of the `var` feature : `var name = (String)null;` since the type is provided !
 
-##### Rules about type inference 
+#### Rules about type inference 
     * A var is used as a local variable in a constructor, method, or initializer block.
     * A var cannot be used in constructor parameters, method parameters, instance variables, or class variables.
     * A var is always initialized on the same line (or statement) where it is declared.
@@ -186,19 +186,18 @@ The following, is a valid usage of the `var` feature : `var name = (String)null;
     * A var is not permitted in a multiple-variable declaration.
     * A var is a reserved type name but not a reserved word, meaning it can be used as an identifier except as a class, interface, or enum name.
 
-#### Variable scope 
+### Variable scope 
 There are 3 types of variable scopes : 
-
-    * Local variables: In scope from declaration to end of block
-    * Instance variables: In scope from declaration until object eligible for garbage collection
-    * Class variables (static): In scope from declaration until program ends
+- Local variables: In scope from declaration to end of block
+- Instance variables: In scope from declaration until object eligible for garbage collection
+- Class variables (static): In scope from declaration until program ends
 
 
 ### Destroying objects
 When an object is no more needed it will be destroyed using the garbage collector. The JVM provides multiple kinds of GC.
 All java objects are stored in the **heap memory**. 
 
-#### Garbage collecting 
+### Garbage collecting 
 GC is refered as the process of automatically freeing memory on the heap by deleting objects that are no longer reachable in your program 
 
 #### Eligible for GC
@@ -206,13 +205,434 @@ eligible for garbage collection refers to an object’s state of no longer being
 Java provides a method called `System.gc()` that call the JVM to kick off the GC process, that doesn't means that the GC will perform right away ! The JVM may perform garbage collection at that moment, or it might be busy and choose not to. The JVM is free to ignore the request.
 
 #### Tracing eligibility 
-An object will remain on the memory heap until it's no more reachable; when one of two situations occurs:
+An object will remain on the memory heap until **it's no more reachable/referenced**; when one of two situations occurs:
 
-    - The object no longer has a reference point ot it !
-    - All references to the objects has gone out of scope !
+- The object no longer has a reference point ot it !
+- All references to the objects has gone out of scope !
 
 > Do not confuse a reference with the object that it refers to; they are two different entities. The reference is a variable that has a name and can be used to access the contents of an object. A reference can be assigned to another reference, passed to a method, or returned from a method. All references are the same size, no matter what their type is.
 
 > An object sits on the heap and does not have a name. Therefore, you have no way to access an object except through a reference. Objects come in all different shapes and sizes and consume varying amounts of memory. An object cannot be assigned to another object, and an object cannot be passed to a method or returned from a method. It is the object that gets garbage collected, not its reference.
 
 ![Reference vs Object](./img/refvsobj.png)
+
+> Before Java 9, java has a finalize() method that was called once by the GC. If the GC didn't run, the finalize method will not be called, if the GC fail to collect the object and tried again later, the finalize method will not be called. But starting from java 9 thid method got deprecated because it causes many issues !
+
+### Java Operators
+In java, there are 3 flafovers of operators : 
+- Unary (requires exactly one operand, or variable, or function)
+- Binary
+- Ternary
+
+#### Operator precedence 
+Is when determining which operators are evaluated in what order.
+
+Order of operator precedence
+|Operator|Symbols and examples|
+|---|---|
+|Post unary operator| expression++, expresion-- |
+|Pre-unary operator| ++expr, --expr |
+|Other unary operator| -,!,~,+, (type) |
+|Multiplication, division, modulus| *, / , % |
+|Addition, substraction| +, -|
+|Shift operators| <<, >>, >>>|
+|Relational operators| <, >, <=, >=, instanceof|
+|Equal to/ not equal to| ==, != |
+|Logical operators| &, ^, pipe |
+|Short-circuit logical operators| &&, 2 pipes |
+|Ternary operators| boolean expr ? expr1 : expr2 |
+|Assignment operators| =, +=, -=, *=, /=, %=, &=, ^=, pipe=, <<= , >>=, >>>= |
+
+Note that pipe is used instead of `|` because, md table use pipes to definde columns.
+
+#### Arithmetic operators
+```
++ , - , * , / , %
+```
+
+Those operators are applied to any java primitives, with exepction to boolean. `+` is also used in String conacatination.
+
+> Please note that parentheses override operation order
+
+**Floor value**
+For integer values, division (/) results in the floor value (`the value without anything after the decimal point`) of the nearest integer that fulfills the operation, example : 
+
+```java
+double i = 1/2; // 1 ; this is the floor value
+double j = 1/2d; // 1.5
+```
+
+#### Number promotion
+**Rules**
+1. If 2 values have different data types, java will automatically promote one of the values to the larger of the 2 data types.
+2. If one of the values is integral and the other is floating-point, java will automatically promote the integral value to the floating-point value's data type.
+3. Small data types like byte, char, short are first promoted to int any time they're used with a **java binary aritmetic** operator.
+4. After all promotion has occurred and the operands have the same data type, the resulting value will have the same data type as its promoted operands.
+
+**example:**
+```java
+short a = 10;
+short b = 20;
+var result = a*b; // result will be an int (the 3rd rule is applied)
+```
+
+#### Casting primitives
+casting primitives is required any time you are going from a larger numerical data type to a smaller numerical data type, or converting from a floating-point number to an integral value.
+
+example:
+
+```java
+int a = 1.2 // 1.2 is a double, so can't compile because double is larger thant int
+int b = 1.5f // float > int
+short c = 125321154 // out of supported range
+```
+if we cast those values, it will give us
+```java
+int a = (int)1.2 // 1
+long b = (long)19.9f // 19
+short c = (short) 125321154 // 16322
+```
+Another example : 
+
+```java 
+short mouse = 10;
+short hamster = 3;
+short capybara = mouse * hamster;  // DOES NOT COMPILE -> because short values (mouse and hamster) are automatically prompted to int and the final result is int, which is > short
+```
+
+> Please note that even if we cast each value alone `(short)mouse` and `(short)hamster` it will not work neither because casting is an unary oprator, so after casting to short, the binary operator `*` will force the short values to be promoted to int
+
+To fix this example we need to cast the result of `(mouse * hamster)` by adding parenthesis, like his :
+
+```java 
+short mouse = 10;
+short hamster = 3;
+short capybara = (short)(mouse * hamster); 
+```
+
+#### Compound assignment operators
+
+Java support many compound assignment operators such as :
+
+|OPERATORS|
+|-----|
+| += |
+| -= |
+| *= |
+| /= |
+
+> Compound operators perform a cast of variable before and after applying the corresponding operator, example :
+```java 
+int number = 20;
+long stock = 2000L;
+number *= stock; // number is an int < stock which is a long , so will first cast number to long then do the multiplication and last cast the result to long
+```
+
+#### Equality operator 
+In java checking equality of two variables depends on the type of the variables (primitives or objects), one should differentiate between: "2 objects are the same" and "2 objects are equivalents"
+
+| Operator	    | Apply to primitives |	Apply to objects |
+|------|------|
+| ==    |	Returns true if the two values represent the same *value*       |	Returns true if the two values *reference* the same object          |
+| !=    |	Returns true if the two values represent different values       |   Returns true if the two values do not reference the same object     |
+
+> when comparing primitives with different types (examples 5 == 5.0) then the smallest data type is promoted to the biggest data type, example 
+```java
+char a = 10;
+float b = 10.0f;
+
+System.out.println(a == b); // display true, since char is promoted to float and then the comparaison is performed
+```
+
+> Rules about comparaison :
+*You can only compare :*
+- numeric or character values (but not boolean and numeric or character)
+- 2 booleans
+- objects, including null and string values (you can even compare a null to a null; null == null)
+
+> When comparing objects with ==, the equality is applied to the references to the objects, not to the values of the objects.
+
+#### comparaison operators:
+|   OPERATORS   |
+|   ------      |
+|   >   |
+|   <   |
+|   >=  |
+|   <=  |
+|   instanceof  |
+
+#### the instanceof operator
+using when trying to determine the type of a given variable (whether it's a subclass of a given type or implemente a given interface), example :
+
+```java 
+// knowing that Integer inheret from Number we can say
+
+public void printConditionally(Number time) { 
+    if(time instanceof Integer) {
+        System.out.println("I'm an integer");
+    }   
+    // do something here
+}
+```
+The above code can work for any method that have an object parameter that inheret from Number class.
+
+> instanceof doesn't work for incompatible types, example : `string instanceof integer` will not compile.
+> This rule is applied to classes but not applied to interfaces (isn't weired huh :p !)
+
+> Note also that the expression : `null instanceof Object` returns always false. and that `null instanceof null` doesn't compile.
+
+#### Logical operators (&,|,^)
+
+![Logical References](./img/logicalOperators.png)
+
+#### Short circuit operators (||,&&)
+|   Operator    |   Description  |
+|   ------  |   ------  |
+|   &&      |   like & (AND) but with a short circuit; if the left side is false, the right side will note be evaluated  |
+|   \|\|    |   like \| (OR) but with a short circuit; if the left side is true, the the right side will not be evaluated   |
+
+> Common use case (NullPointerException)
+a common use case for the short circuit operator, is when avoiding NPE (NullPointerException) :
+
+```java
+Duck duck = null;
+if (duck != null & duck.getAge() < 10) { 
+    //do somthing
+}
+```
+in this case we will get an `NPE` since both sides are evaluated, and we duck is null. To fix this we should replace the `&` (AND) logical operator with `&&` (Short circuit AND), so that when left side (`duck != null`) is false we will not evaluate the right side.
+
+> Common unperformed side effects
+Be wary of short-circuit behavior in some situation, like below :
+
+```java
+int rabbit = 6;
+boolean bunny = (rabbit >= 6) || (++rabbit <= 7);
+System.out.println(rabbit); // 6
+```
+Here since we use `||` short circuit operator, if the left side is true then the right side is skipped. And so `(++rabbit <= 7)` is not evaluated! thus rabbit is always equal to 6.
+
+#### Ternary operator
+is a form of condanced if/else statement, that contains :
+`(boolean expression) ? expression1 : expression2;`
+
+example:
+```java
+int owl = 5;
+int food = owl < 2 ? 3 : 4;
+System.out.println(food); // 4
+```
+
+## Making Decisions (control flows): if/else, switch statement, while statement, do-while statement, For loop, etc ...
+
+### The if/else statement
+permit to make a decision in the control flow of execution, **it should contains only boolean expression**, example :
+
+```java
+int number = 2;
+if (number % 2 == 0) {
+    System.out.println("even number");
+} else {
+    System.out.println("odd number");
+}
+```
+
+### The switch statement
+The switch statement is used in cases when we have a lot of if statements, for example if we might print a message based on the day of the week:
+
+```java
+int x = 2;
+switch(x) {
+    case 2 :
+        System.out.println("even number");
+        break;  
+    case 3: case 5:
+        System.out.println("odd number");
+        break;
+    default:
+        System.out.println("other");
+}
+```
+#### structure of a switch statement : 
+![structure of a switch statement](./img/switch-statement.png)
+
+> Notice that boolean, long, float, and double are excluded from switch statements, as are their associated Boolean, Long, Float, and Double classes. The reasons are varied, such as boolean having too small a range of values and floating-point numbers having quite a wide range of values. For the exam, though, you just need to know that they are not permitted in switch statements.
+
+#### allowed types in a switch statment are : 
+- byte/Byte, short/Short, char/Character, int/Integer, enum (since java 5), String (since java 7), var **if derived from supported type** (since java 10).
+- boolean, long, float, double, and their Wrapper classes **ARE NOT ALLOWED IN SWITCH STATEMENT**
+
+#### switch special cases :
+ - In a switch statement if no case is mutched and the `default` case is present then the default case will be executed untill it find a `break;` statement, example: 
+
+```java
+/*
+    This will display :
+    default
+    case 3
+*/
+int x = 2;
+switch(x) {
+    case 5:
+        System.out.println("case 5");
+        break;
+    default:
+        System.out.println("default");
+    case 3 : 
+        System.out.println("case 3");
+        break;
+}
+```
+
+ - The order of the `default` statement is not important. and it's called **only if there is no matching case** !
+ - In case statement, you can use only : literals, enums or `final` constant variables (`final varname = literal`) of **the same type as the variable used in the switch**. Example :
+
+ ```java
+final int getCookies() { return 4; }
+void feedAnimals() {
+   final int bananas = 1;
+   int apples = 2; // need final keyword
+   int numberOfAnimals = 3; // need final keyword
+   final int cookies = getCookies(); // need literal assignement with known value at compile-time
+   switch (numberOfAnimals) {
+      case bananas:
+      case apples:  // DOES NOT COMPILES
+      case getCookies():  // DOES NOT COMPILE
+      case cookies :  // DOES NOT COMPILE
+      case 3 * 5 :
+   }
+}
+ ```
+
+ - **switch statement support numeric promotion**
+
+```java
+short size = 4;
+final int small = 15;
+final int big = 1_000_000;
+switch(size) {
+   case small:
+   case 1+2 :
+   case big:  // DOES NOT COMPILE
+}
+```
+  The compiler can easily cast small from int to short at compile-time because the value 15 is small enough to fit inside a short. This would not be permitted if small was not a compile-time constant. Likewise, it can convert the expression 1+2 from int to short at compile-time. On the other hand, 1_000_000 is too large to fit inside of short without an explicit cast, so the last case statement does not compile.
+
+### WHILE loop statement
+
+A loop is a repetitive control structure that can execute a statement of code multiple times in succession. A while loop until the boolean expression is not met, example :
+
+```java
+int counter = 10;
+while(counter > 0) {
+    System.out.println("Hey : " + counter);
+    counter--;
+}
+```
+
+If the condition is not satisfied at the first exection, then while loop body will not be invoked (zero execution).
+
+### The DO/WHILE statement
+Unlike a while loop, though, a do/while loop guarantees that the statement or block will be executed at least once. 
+Whereas a while loop is executed zero or more times, a do/while loop is executed one or more times.
+
+```java
+int lizard = 0;
+do {
+   lizard++;
+} while(false);
+System.out.println(lizard);  // 1
+```
+
+### The FOR loop
+A basic for loop has the same conditional boolean expression and statement, or block of statements, as the while loops, as well as two new sections: an initialization block and an update statement.
+![FOR LOOP](./img/for-loop.png)
+
+- Variables declared in the initialization block of a for loop have limited scope and are accessible only within the for loop
+- we can use `var` (type inference) in initialization block like so :
+
+```java
+// i will be of int type
+for(var i = 0; i < 20; i++) {
+    // do something
+}
+```
+- We can add multiple terms (separated with semi colon) to the for loop, like bellow :
+```java
+int x = 0;
+for(long y = 0, z = 4; x < 5 && y < 10; x++, y++) {
+   System.out.print(y + " "); }
+System.out.print(x + " ");
+```
+- Variables in the initialization block should have the same type.
+- We can't use the same variable name in initialization block if there is already an existing one outside the for loop.
+
+### The FOR EACH LOOP
+The for-each loop is composed of initalization part (at the left) + the object to be iterated over. 
+The right side must be one of the following:
+
+ - A built-in Java array.
+ - An object whose type implements java.lang.Iterable (this doesn't include all Collection framework classes or interfaces, but only those that implement or extend that Collection interface).
+
+ ![FOR LOOP](./img/for-each-loop.png)
+
+ - Java convert the foreach loop into a standard for loop during compilation (for arrays it use indexes, for collection it uses `Iterator` interface).
+
+### NETSTED LOOPS
+Netsed loops are simply that are inside other loops, example :
+
+```java
+int[][] twodim = new int[][]{{1,2,3}, {4,5,6}, {7,8,9}};
+for(int[] row : twodim) {
+  for(int column: row) {
+    System.out.print(column + "\t");
+  }
+  System.out.println("\n");
+}
+```
+
+### OPTIONAL LABEL
+A label is an optional pointer to the head of a statement that allows the application flow to jump to it or break from it. It is a single identifier that is proceeded by a colon (:). For example :
+
+```java
+int[][] twodim = new int[][]{{1,2,3}, {4,5,6}, {7,8,9}};
+OUTER_LOOP: for(int[] row : twodim) {
+  INNER_LOOP: for(int column: row) {
+    System.out.print(column + "\t");
+  }
+  System.out.println("\n");
+}
+
+```
+
+### The BREAK Statement
+The `break` statement transfers the flow of control to the enclosing statement.
+- If the break is specified without an optional label, it will terminate the nearest inner loop it is currently in the process of executing !
+- If the break is specified with a label, it will terminate a higher outer loop referenced by this label.
+
+```java
+optionalLabel: while(condition) {
+    // body
+    for(int a: nums[]) {
+        // somewhere in the loop
+        break optionalLabel; // this will terminate the while loop
+    }
+}
+```
+
+### The CONTINUE statement
+The `continue` statement causes flow to finish the execution of **the current loop**.
+
+- If the `continue` is used with an optional Label, it will stop the execution of the current processing and continue (jump) to the next record in the outer loop where the label is present.
+- Otherwise it will stop the execution of the current processing in the nearest inner loop and continue to the next record.
+
+```java
+optionalLabel: while(condition) {
+    // body
+    for(int a: nums[]) {
+        // somewhere in the loop
+        continue optionalLabel; // this will stop the current processing and pass to the next record in the while condition (if any - depends on the condition)
+    }
+}
+```
+
