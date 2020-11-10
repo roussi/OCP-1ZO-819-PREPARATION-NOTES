@@ -1,19 +1,20 @@
-# OCA-8/OCP-11 PREPARATION NOTES 
+# JAVA 11 OCP CERTIFICATION (1ZO-819) PREPARATION NOTES 
 
 ## Introduction
-This repository contains notes about OCA 1ZO-808 and OCP 1ZO-819 certifications, you can contribute to it either adding/updating notes by raising PRs
+This repository contains complete notes about OCP 1ZO-819 certification, you can contribute to it either adding/updating notes by raising PRs.
 
 ## Resources
 
 ### Books
 
-* Oracle Certified Professional 11 Developer Complete : [Amazon link](https://www.amazon.com/Oracle-Certified-Professional-Developer-Complete/dp/1119619130)
+* Oracle Certified Professional 11 Developer Complete : [Oracle-Certified-Professional-Developer-Complete](https://www.amazon.com/Oracle-Certified-Professional-Developer-Complete/dp/1119619130)
+* Selikoff website : [https://www.selikoff.net/](https://www.selikoff.net/java-11-books/) 
 
 ## Notes
 
 ## Chapter 1: History
 
-Will right this later
+Will write this later
 
 ## Chapter 2: Java building blocks "you have to learn to walk before you can run"
 
