@@ -637,3 +637,134 @@ optionalLabel: while(condition) {
 }
 ```
 
+## Chapter 5 : Core java API
+
+### Creating and manipulating String 
+A string is basically a sequence of characters (implements the `CharSequence` interface), it's definition look like : 
+
+```java
+public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
+    // ....
+}
+```
+- String is a final class => can't be inhereted  
+- The String class is a special class that you can initialize in two ways (with and without the keyword`new`) :
+```java
+private String name = "Ali";
+private String greeting = new String("Hello");
+```
+
+### Concatenation
+Combining Strings is called concatenation (`"1" + "2" // will result "12"`). There are some rules to know about string concatenation to know when using `+` operation :
+1- if both operands are numeric => addition
+2- if one of operands is a String => contatenation
+
+Be aware of this tricky case (+ operation operate from left to right): 
+
+```java
+String result1 = 1 + 2 + "a"; // gives "3a"
+String result2 = "a" + 1 + 2; // gives "a12"
+```
+
+### Immutability
+Once a String object is created, it cannot be changed or resized. Mutable word means "changeable", Immutable is the oposite word !
+To ensure immutability of a class, it should not provide a way (methods like setters or if its members are public) to changes its state; example :
+
+```java
+public class MutablePerson {
+    private String name;
+    public int age; // this make the class mutable, since we can change the object state through age property
+
+   // The setter make this class mutable since we can change its state by setting a new name 
+    public setName(String name) {
+        this.name = name;
+    }
+}
+
+/**
+ * This class is immutable since when created through the constructor there is no way to change its state (member states)  
+ */
+public class ImmutablePerson {
+    private String name;
+    private int age;
+
+    public ImmutablePerson(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    // only getters here
+}
+```
+
+- **Immutable classes in java are final**, which prevents subclass creation. You would having a subclass adding mutable behavior.
+- There is another way to concat strings; through `String#concat() method`, this result is a new immutable String, example : 
+```java 
+String s1 = "1";
+String s2 = "2".concat(s1);
+s2.concat("s3"); // the result is thrown away
+System.out.println(s2); // gives "21"
+```
+
+### IMPORTANT STRING METHODS
+
+|   Method                  |   Explination         |   Example         |
+|   --------                |   --------            |   --------        |
+|   `int length()`          |   return the number of characters is the String.   |   `"hello".length(); //gives 5`      |
+|   `char charAt(int index)`  |   return the character at the given index position | `"hello".charAt(1); // returns 'e'`  `"hi".charAt(2); // throw java.lang.StringIndexOutOfBoundsException` |
+|   `int indexOf(int ch)` or `indexOf(int ch, int fromIndex)` or `indexOf(String str)` or `indexOf(String str, int fromIndex)`         |    Looks at the characters in the string and find the first index that matches the desired value, can accept an individual char or a whole string as input, it can also start from a desired position. **INDEX returns -1 if it can't find a matching result** |    `"hello world".indexOf("ld",4); // returns 9`| 
+|   `String substring(int beginIndex)` or `String substring(int beginIndex, int endIndex)` **[begin,end[** | retruns a part of the original string, starting from an index (included) up to the end or up to an end index (excluded). In case of invalid index, the method throw a `java.lang.StringIndexOutOfBoundsException` | `"hello world".substring(6); // gives world` `"hi".substring(1,1); //gives empty string`|
+|   `String toLowerCase()` and `String toUpperCase()`   | upperCase or lowerCase a string| `"hello".toUpperCase(); // gives "HELLO"`|
+|   `boolean equals(String)` and `boolean equalsIgnoreCase(String)` | `equals()` Verify if two strings contains the same characters at the sae orders, `equalsIgnoreCase()` do the same besides it convert the character cases if needed (ignoreCase) | `"hello".equals("HEllo"); // false - "hello".equalsIgnoreCase("HEllo") //true`|
+|   `boolean startsWith(String prefix)` and `boolean endsWith(String suffix)` | look if a string start with a given prefix or end with a given suffix. **Case sensitive**| `"hello".startsWith("he"); // true -  "hello".startsWith("He"); // false`|
+|   `String replace(char oldChar, char newChar)` or `String replace(CharSequence target, CharSequence replacement)`| replace() method does a simple search and replace on the string | `"abcabc".replace('a', 'A'); // AbcAbc` - `"abcabc".replace("abc", "Hello")); // "HelloHello"`|
+|   `boolean contains(CharSequence charSeq)`| looks for matches in the String | `"abc".contains("b"); // true - "abc".contains("B")); // false`|
+|   `String strip()` `String stripLeading()` `String stripTrailing()` `String trim()`| strip and trim are methods that removes whitespace from begin or/and end of string whitespace consist of space,'\r','\n','\t') **strip was introduced in java11, it support unicode also**, stripLeading removes whitespace at the beginning of the string and leaves them at the end, stripTrailing do the opposite | `" \t hello world \n".strip(); //  gives "hello world"`|
+|   `String intern()`   |   return the value from the string pool if its there, otherwise it adds the value to string pool| `"hello".trim()`    |
+|   `String[] split(String regex)`  |   Split the string into array of string by a matching regex | `"hello-world".split("-"); // gives {"hello","world"}`  |
+
+### StringBuilder
+- Is a mutable class that provide the possibility of creating and updating strings. 
+- We used to have in older version the `StringBuffer` which is the same as `StringBuilder` except **it supprts threads**, but it's much **slower than `StringBuilder`** !
+- The `StringBuilder` have 3 constructors :
+```java
+    StringBuilder sb = new StringBuilder(); // init empty String
+    StringBuilder sb = new StringBuilder(10); // length of the string
+    StringBuilder sb = new StringBuilder("Hello");  // init with a given value
+```
+
+- The `StringBuilder` use the `StringBuilder append(CharSequence char)` to concatenate Strings, note that **it returns the reference of the StringBuilder** :
+```java
+StringBuilder s1 = new StringBuilder("hello");
+StringBuilder s2 = a.append("-world"); // here we modified the object referenced by a ("abc") by adding "efg" to it, now both references a & b points to the same object
+b.append("-from").append("-stringBuilder"); // here we modify the object referenced by a & b
+System.out.println("s1 : " + s1); // prints "hello-world-from-stringBuilder
+System.out.println("s2 : " + s2); // prints "hello-world-from-stringBuilder
+```
+
+### IMPORTANT StringBuilder METHODS
+|   Method                  |   Explination         |   Example         |
+|   --------                |   --------            |   --------        |
+|   `charAt()`, `indexOf()`, `length()`, and `substring()` |    Same as String functions    |   None    |
+|   `StringBuilder append(String str)` it also accept many datatype  |   Add the parameter into the stringBuilder instance and return the reference to that object   |   `s1.append("world"); // gives "helloworld"`|
+|   `StringBuilder insert(int offset, String str)`  |   Insert at the given offset/position a given parameter | `s1.insert(0, "prefix")`  | 
+|   `StringBuilder delete(int startIndex, int endIndex)` **[startIndex,endIndex[** or `StringBuilder deleteCharAt(int index)`  | Delete a sequence of characters between start and end indexes  | `StringBuilder s1 = new StringBuilder("hello"); s1.delete(1,4).toString(); // gives "ho"`  |
+|   `StringBuilder replace(int startIndex, int endIndex, String newString)` | Works differently from `String#replace(string,string)`, it replace the char sequence between **[startIndex,endIndex[** with a given char sequence |  `s1.replace(1,4, "ELL") //gives "hELLo"`   |
+|   `StringBuilder reverse()`   |   It reverse the char sequence of stringBuilder   |   `s1.reverse(); // gives oLLEh`  |
+
+### Equality
+
+#### Equals() vs ==
+When using `==` operator to compare 2 instances of String/StringBuilder, meaning that we are comparing references not values of objects, since we are dealing with objects. Examples:
+
+```java
+String a = "Hello World";
+String b = " Hello World".trim();
+String c = a.trim().intern(); // intern() looks at the string pool if it can finds the object there, and return it
+System.out.println(x == z); // false
+System.out.println(a == c); // true (since a and c references the same object)
+```
+> The authors of `StringBuilder` didn't implements equals() method; if you call `StringBuilder#equals()` on 2 stringBuilder instances, it will check reference equality. You can call `StringBuilder#toString()` and then compare. 
+
+> Whenever we call an unplemented `quals()` method on an object, it will compare references not objects (values).
+
+### THE STRING POOL
