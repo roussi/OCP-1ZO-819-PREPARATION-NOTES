@@ -219,13 +219,13 @@ An object will remain on the memory heap until **it's no more reachable/referenc
 
 > Before Java 9, java has a finalize() method that was called once by the GC. If the GC didn't run, the finalize method will not be called, if the GC fail to collect the object and tried again later, the finalize method will not be called. But starting from java 9 thid method got deprecated because it causes many issues !
 
-### Java Operators
+## CHAPTER 3 :  JAVA OPERATORS
 In java, there are 3 flafovers of operators : 
 - Unary (requires exactly one operand, or variable, or function)
 - Binary
 - Ternary
 
-#### Operator precedence 
+### Operator precedence 
 Is when determining which operators are evaluated in what order.
 
 Order of operator precedence
@@ -246,7 +246,7 @@ Order of operator precedence
 
 Note that pipe is used instead of `|` because, md table use pipes to definde columns.
 
-#### Arithmetic operators
+### Arithmetic operators
 ```
 + , - , * , / , %
 ```
@@ -263,7 +263,7 @@ double i = 1/2; // 1 ; this is the floor value
 double j = 1/2d; // 1.5
 ```
 
-#### Number promotion
+### Number promotion
 **Rules**
 1. If 2 values have different data types, java will automatically promote one of the values to the larger of the 2 data types.
 2. If one of the values is integral and the other is floating-point, java will automatically promote the integral value to the floating-point value's data type.
@@ -277,7 +277,7 @@ short b = 20;
 var result = a*b; // result will be an int (the 3rd rule is applied)
 ```
 
-#### Casting primitives
+### Casting primitives
 casting primitives is required any time you are going from a larger numerical data type to a smaller numerical data type, or converting from a floating-point number to an integral value.
 
 example:
@@ -311,7 +311,7 @@ short hamster = 3;
 short capybara = (short)(mouse * hamster); 
 ```
 
-#### Compound assignment operators
+### Compound assignment operators
 
 Java support many compound assignment operators such as :
 
@@ -329,7 +329,7 @@ long stock = 2000L;
 number *= stock; // number is an int < stock which is a long , so will first cast number to long then do the multiplication and last cast the result to long
 ```
 
-#### Equality operator 
+### Equality operator 
 In java checking equality of two variables depends on the type of the variables (primitives or objects), one should differentiate between: "2 objects are the same" and "2 objects are equivalents"
 
 | Operator	    | Apply to primitives |	Apply to objects |
@@ -353,7 +353,7 @@ System.out.println(a == b); // display true, since char is promoted to float and
 
 > When comparing objects with ==, the equality is applied to the references to the objects, not to the values of the objects.
 
-#### comparaison operators:
+### comparaison operators:
 |   OPERATORS   |
 |   ------      |
 |   >   |
@@ -362,7 +362,7 @@ System.out.println(a == b); // display true, since char is promoted to float and
 |   <=  |
 |   instanceof  |
 
-#### the instanceof operator
+### the instanceof operator
 using when trying to determine the type of a given variable (whether it's a subclass of a given type or implemente a given interface), example :
 
 ```java 
@@ -382,11 +382,11 @@ The above code can work for any method that have an object parameter that inhere
 
 > Note also that the expression : `null instanceof Object` returns always false. and that `null instanceof null` doesn't compile.
 
-#### Logical operators (&,|,^)
+### Logical operators (&,|,^)
 
 ![Logical References](./img/logicalOperators.png)
 
-#### Short circuit operators (||,&&)
+### Short circuit operators (||,&&)
 |   Operator    |   Description  |
 |   ------  |   ------  |
 |   &&      |   like & (AND) but with a short circuit; if the left side is false, the right side will note be evaluated  |
@@ -413,7 +413,7 @@ System.out.println(rabbit); // 6
 ```
 Here since we use `||` short circuit operator, if the left side is true then the right side is skipped. And so `(++rabbit <= 7)` is not evaluated! thus rabbit is always equal to 6.
 
-#### Ternary operator
+### Ternary operator
 is a form of condanced if/else statement, that contains :
 `(boolean expression) ? expression1 : expression2;`
 
@@ -424,7 +424,7 @@ int food = owl < 2 ? 3 : 4;
 System.out.println(food); // 4
 ```
 
-## Making Decisions (control flows): if/else, switch statement, while statement, do-while statement, For loop, etc ...
+## CHAPTER 4 : Making Decisions (control flows): if/else, switch statement, while statement, do-while statement, For loop, etc ...
 
 ### The if/else statement
 permit to make a decision in the control flow of execution, **it should contains only boolean expression**, example :
