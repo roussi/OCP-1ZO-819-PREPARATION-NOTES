@@ -768,3 +768,160 @@ System.out.println(a == c); // true (since a and c references the same object)
 > Whenever we call an unplemented `quals()` method on an object, it will compare references not objects (values).
 
 ### THE STRING POOL
+Since strings are used everywhere in java, they use a lot of memory. This can leads to leak in memory for big applications. Fortunalty java had added the functionality to reuse those repeated strings.
+ - The string pool (intern pool) is a location in the JVM where java stocks all these strings.
+ - The string pool **contains only literal values (example "hello")**, note that `someObject.toString()` is a string but not a literal string.
+
+Common cases: 
+```java
+String s1 = "Hello World";
+String s2 = "Hello " + "World"; // compile time constant => placed to the string pool if not yet exists as "Hello World". In our case s2 and s1 shares the same string pool reference.
+String s3 = "  Hello Wolrd".trim(); // computed at runtime - isn't the same at compile time
+String s4 = new String("Hello World"); // not a literal value 
+String s5 = "Hello ";
+s5 += "World";
+String s6 = s4.intern(); // looks of this string exist in the string pool
+
+System.out.println(s1 == s2); // true
+System.out.println(s1 == s3); // false
+System.out.println(s2 == s3); // false
+System.out.println(s1 == s4); // false
+System.out.println(s1 == s5); // false
+System.out.println(s1 == s6); // true
+``` 
+### JAVA ARRAYS
+We said that a string is a sequence of characters, this is true because in java a String is implemented as an **array** for characters (`char[] characters;`). *An array is an area of memory on the heap with space for a designated number of elements*. A `StringBuilder` is implemented as an array where the array object is replaced with the new bigger array object when it runs out of space to store all the characters.
+
+#### What is an array ?
+An array is an ordered list, of the same type, with fixed size. It can conatain duplicates.
+
+#### Creating an array
+1- One way of creating an array is using the `new` keyword and specifiying its size, example :
+
+```java
+int[] numbers = new int[20]; // all elements of the array takes the default value of the array type, in our case it will be [0,0,0...,0] 0 tweenty time.
+```
+
+2- Another way of creating an array is to specify all elements it should start with, example : 
+
+```java
+int[] numbers = new int[] {20,30,40,50,60}; // this time we created an array of 5 elements. 
+```
+
+##### Anonymous arrays:
+The statement "new int[]" is considered as redundant since we are specifying the type of the array on left side, java already now the type and the size, as simpification java let you do it like this : 
+```java
+int numbers = {20,30,40,50,60}
+```
+This is called an **anonymous array**.
+
+##### Valid forms of array declaration:
+You can use [] before or after reference name, and adding a space is optional. Are those declaration are valides: 
+
+```java
+int[] numbers;
+int [] numbers;
+int []numbers;
+int numbers[];
+int numbers [];
+int[] a,b; // is equivalent to int[] a; int b[];
+int a[], b; // this is equivalent to int a[]; int b;
+```
+##### Creating an array with reference:
+You can choose any type to be the type of an array, this include classes :
+
+```java
+String[] cars = {"Bugati", "Lamberguini", "Ferrari"};
+String myCars = cars; // got the same reference
+
+System.out.ptintln(myCars.equals(cars)); // true => since we compare the references not the array content !
+System.out.ptintln(myCars.toString()); // 
+```
+> The output `[Ljava.lang.String;@160bc7c0` means: [L (it's an array), `java.lang.String` (is the Type of the array), and *160bc7c0* (is the hashcode, it will change on each execution since it's a reference).
+
+> Since java 5, java has provided a method to prints all elements in an array called : `Arrays.toString(cars)`
+
+##### Arrays and memory allocation:
+The array doesn't allocate space for objects values. Instead is allocates space for a reference to where the objects are really stored. 
+An array that is not instanciated point to nothing, which means `null`, example : `String[] cars;`.
+An array like that `String[] cars = new String[2];` have two elements both currently are `null`, but has the potentiel **to point to** a String object.
+
+##### Casting an Array:
+Like we learned before we can go from an object to a more specific object which inheret from the former one. This is also true about array.
+
+```java
+String cars[] = {"Bugati", "Ferrari"};
+Object[] vehicle = cars; // without casting since Object is superiour to String
+String[] anotherCars = (String[]) vehicle; // casting is needed, we go from more specific object to it's parent
+anotherCars[0] = new StringBuilder("Mercedes"); // COMPILE TIME ERROR : can't assigne StringBuilder to String type.
+vehicle[0] = new StringBuilder("Bycle"); // RUNTIME EXCEPTION : java.lang.ArrayStoreException. even if StringBuilder inheret from Object, this will not work since vehicle reference an array of Strings.
+System.out.println(Arrays.toString(cars));
+```
+
+#### Array useful methods :
+|   Method  |   Description     |
+|   ------  |   ------          |
+|   `void Arrays.sort(cars)` |   Sort any kind of array  |
+|   `String Arrays.toString(cars)` |   Return elements as string `["a", "b"]`    |
+|   `int Arrays.binarySearch(cars, "Bugatti")`  |   Search for element only if array is sorted, will returns index of match if exits, otherwise returns a negative value (which is the reverse index of where this could be fit in the array)|
+|   `int compare(cars1, cars2)` |   Compare 2 arrays; return (-/+indexOfElementInArray (if both arrays length are equals and first none match of cars1 < cars2 => (- signe, otherwise + signe)  / if arrays length are different return -/+sizeOfTheBiggestArray ),0 if both are equals) `-number => cars1 < cars2 | 0 => cars1 == cars2 | +number => cars1 > cars2` |
+|   `int mismatch()`  | If the arrays are equal, mismatch() returns -1. Otherwise, it returns the first index where they differ  |
+
+> Rules about compare :
+> - If both arrays are the same length and have the same values => the return = 0
+> - If cars1 contains the same elements as cars2 but cars2 has extra element => the return of `Arrays.compare(cars1, cars2)` = +indexOf
+> - If the first element that differs is smaller (in cars1) than the other (in cars2) => the return of `Arrays.compare(cars1, cars2)` = 1
+> Smaller element are defined follow these rules : null < numbers < strings (UPPER CASES < LOWER CASES)
+
+#### Varargs (variable argument)
+When passing an array to a method,it could be done in one of the following three ways : 
+```java
+public void method(String[] args) {}
+public void method(String args[]) {}
+public void method(String... args) {} // this is called varargs (variable argument)
+```
+The third way is called varargs, and it's similar to the other ways; thus we can treat `args` as a regular array, so we can use `args[0]` and `args.length`.
+
+### Multi-dimentional arrays 
+Arrays are objects, and array elements are objects too, so the element it self could be an array, and so on and so forth...
+
+#### Declaring multidimentional arrays :
+We can declare multidimentional arrays like so : 
+```java
+int[][] array = new int[2][2]; // 2D array of 2 rows / 2 columns
+int[] array[] = {{1,2,3},{4,5,6}}}; // 2D array of 2 rows, 3 columns
+int[] array1[] array2[][]; // 2D and 3D array
+```
+##### Asymmetric multidimentional array
+While arrays happens  to be rectangle in shape, they doasn't need to be so, we can declare mulitdimentional arrays where each element is an array of different size; this type of arrays is called an asymmetric multidimentional arrays. Example : 
+
+```java 
+int[][] asymmetricArray = {{1,2}, {3}, {4,5,6}}; 
+int[][] asymmetricArray = new int[5][]; // column might have different sizes
+asymmetricArray[0] = new int[6];
+asymmetricArray[1] = {1,2};
+```
+
+##### Traversing a multidimentional array
+There is multiple ways for looping over multidimentional arrays; 
+
+- Using FOR loop :
+
+```java
+int[][] multidimArray = {{1,2,3},{4}};
+for(int i=0; i < multidimArray.length; i++) {
+    for(int j=0; j < multidimArray[i].length; j++) {
+        System.out.println(multidimArray[i][j]);
+    }
+}
+```
+
+- Using FOREACH loop : 
+```java
+int[][] multidimArray = {{1,2,3},{4}};
+for (int[] rows : multidimArray) {
+  for (int column : rows) {
+    System.out.print(column);
+  }
+} 
+```
