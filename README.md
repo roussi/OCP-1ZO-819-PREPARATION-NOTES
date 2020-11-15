@@ -808,14 +808,14 @@ int[] numbers = new int[20]; // all elements of the array takes the default valu
 int[] numbers = new int[] {20,30,40,50,60}; // this time we created an array of 5 elements. 
 ```
 
-##### Anonymous arrays:
+##### <ins>Anonymous arrays:</ins>
 The statement "new int[]" is considered as redundant since we are specifying the type of the array on left side, java already now the type and the size, as simpification java let you do it like this : 
 ```java
 int numbers = {20,30,40,50,60}
 ```
 This is called an **anonymous array**.
 
-##### Valid forms of array declaration:
+##### <ins>Valid forms of array declaration:</ins>
 You can use [] before or after reference name, and adding a space is optional. Are those declaration are valides: 
 
 ```java
@@ -827,7 +827,7 @@ int numbers [];
 int[] a,b; // is equivalent to int[] a; int b[];
 int a[], b; // this is equivalent to int a[]; int b;
 ```
-##### Creating an array with reference:
+##### <ins>Creating an array with reference:</ins>
 You can choose any type to be the type of an array, this include classes :
 
 ```java
@@ -925,3 +925,66 @@ for (int[] rows : multidimArray) {
   }
 } 
 ```
+
+### ArrayList in Java
+Java array have some limitations such as fixed size; in order to use an array you should know its size in advance which is not suitable ! Just like `StringBuilder` (for `String`), an `ArrayList` can change size (capacity) at runtime as needed.
+- An `ArrayList` is an order list like Array that allow duplicates, the only difference between `ArrayList` and `Array` is size/capacity which is dynamic in `ArrayList` and fixed in `Array`.
+- `ArrayList` implement `List` which is an interface, so know that you can store an `ArrayList` in a `List` reference but not the inverse.
+
+```java
+List<String> list = new ArrayList<>();
+```
+ 
+#### Creating an ArrayList
+Just like `StringBuilder` an, there are 3 ways to create `ArrayList` : 
+
+```java
+// Pre-Java 5 (before Generic) way of creating arrays
+ArrayList list1 = new ArrayList();
+ArrayList list2 = new ArrayList(10);
+ArrayList list3 = new ArrayList(list2);
+
+// After Java 5 (generic) way
+ArrayList<String> list4 = new ArrayList<String>();
+ArrayList<String> list5 = new ArrayList<>(10); // Starting from java 7 we can omit the Type in the right side of declaration / the <> (called also diamond operator) are still required.
+```
+##### <ins>Using `var` with ArrayList</ins>
+We can use the **local variable type inference** `var` with `ArrayList` as follow : 
+```java
+var array1 = new ArrayList<String>(); // 
+array1.add("hello");
+array1.add(1, "world");
+// This will print : hello  world
+for(var element : array1) {
+    System.out.print(element + "\t");
+}
+```
+
+A declaration like this : `var array1 = new ArrayList<>()` is authorized, the `array1` can accept any object type. but can only be traversed using Object element : 
+```java
+var array1 = new ArrayList<>();
+array1.add("Hello"); // pass because Object (is the most generic) > String
+array1.add(1L); // since it's an array of object and Long is Object too
+for(String element: array1) {} // doesn't COMPILE , we need to use Object to pass it because, array1 is of ArrayList<Object>, so only object can pass (String < Object)
+for(Object element: array1) {} // This pass successfuly
+```
+
+##### <ins>Using an ArrayList</ins>
+`ArrayList` has many methods, among them there are (we will suppose that we already initialized an ArrayList called list; `List<String> list = new ArrayList<>(); list.add("Hello");`): 
+
+|    Method     | Description   | Example       |
+|   --------    |   --------    |   --------    |
+|   `boolean add(E element)`, `void add(int index, E element)`  |   This method add elements to the `ArrayList`. The first signature always return `true` the second one adds the element at the specific index/position and moves existing elements to the right (see the example) |    `list.add("World"); list.add(0,"Hi ! "); // gives : Hi ! World Hello`   |
+|   `boolean remove(Object object)`, `E remove(int index)`  |   Remove the first matching element (case sensitive) in the ArrayList (return `true` if matched and removed otherwise `false`), or remove the element at a specific index/position, if the index doesn't exist this will throw `java.lang.IndexOutOfBoundsException`  |  `boolean isRemoved = list.remove("Hello"); String removedElement = list.remove(0);` |
+|   `E set(int index, E newElement)`    |   Change an element at the specific index/position, without changing the ArrayList size, and return the element that got replaced (old one)   | `String replacedElement = list.set(0, "Hallo"); // replace Hello by Hallo`  |
+|   `boolean isEmpty()` |   Return a boolean to tell whether a list is empty or not |   `boolean isEmpty = list.isEmpty(); // gives false since the list contains "Hello"`  |
+|   `int size()`        |   Return the size of the ArrayList    |   `int size = list.size(); // return 1 since the list contains one element "Hello"`   |
+|   `void clear()`        |   Remove all elements of a list   |   `list.clear();`   |
+|   `boolean contains(Object object)`   |   Check whether a certain value is in the `ArrayList`. this method calls `equals()` on each element of the `ArrayList`, since String implements `equals()` this works out well. |   `list.contains("Hello"); // return true`    |
+|   `boolean equals(Object object)`  |   ArrayList has a custom implementation of `equals()`, so we can compare 2 lists to see if **they contain the same elements in the same order**, the methods calls `equals` for each element at the same position in both list to compare equality.  |   `list.equals(new ArrayList<>()); // return false`  |
+
+### WRAPPER CLASSES
+
+
+
+
