@@ -844,7 +844,7 @@ System.out.ptintln(myCars.toString()); //
 ##### Arrays and memory allocation:
 The array doesn't allocate space for objects values. Instead is allocates space for a reference to where the objects are really stored. 
 An array that is not instanciated point to nothing, which means `null`, example : `String[] cars;`.
-An array like that `String[] cars = new String[2];` have two elements both currently are `null`, but has the potentiel **to point to** a String object.
+An array like that `String[] cars = new String[2];` have two elements both currently are `null`, <ins>but has the potentiel **to point to** a String object</ins>.
 
 ##### Casting an Array:
 Like we learned before we can go from an object to a more specific object which inheret from the former one. This is also true about array.
