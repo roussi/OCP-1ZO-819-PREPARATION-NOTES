@@ -885,14 +885,14 @@ The third way is called varargs, and it's similar to the other ways; thus we can
 ### Multi-dimentional arrays 
 Arrays are objects, and array elements are objects too, so the element it self could be an array, and so on and so forth...
 
-#### Declaring multidimentional arrays :
+#### <ins>Declaring multidimentional arrays:</ins>
 We can declare multidimentional arrays like so : 
 ```java
 int[][] array = new int[2][2]; // 2D array of 2 rows / 2 columns
 int[] array[] = {{1,2,3},{4,5,6}}}; // 2D array of 2 rows, 3 columns
 int[] array1[] array2[][]; // 2D and 3D array
 ```
-##### Asymmetric multidimentional array
+##### <ins>Asymmetric multidimentional array:</ins>
 While arrays happens  to be rectangle in shape, they doasn't need to be so, we can declare mulitdimentional arrays where each element is an array of different size; this type of arrays is called an asymmetric multidimentional arrays. Example : 
 
 ```java 
@@ -902,10 +902,10 @@ asymmetricArray[0] = new int[6];
 asymmetricArray[1] = {1,2};
 ```
 
-##### Traversing a multidimentional array
+##### <ins>Traversing a multidimentional array:</ins>
 There is multiple ways for looping over multidimentional arrays; 
 
-- Using FOR loop :
+- Using **FOR** loop :
 
 ```java
 int[][] multidimArray = {{1,2,3},{4}};
@@ -916,7 +916,7 @@ for(int i=0; i < multidimArray.length; i++) {
 }
 ```
 
-- Using FOREACH loop : 
+- Using **FOREACH** loop : 
 ```java
 int[][] multidimArray = {{1,2,3},{4}};
 for (int[] rows : multidimArray) {
