@@ -861,11 +861,11 @@ System.out.println(Arrays.toString(cars));
 #### Array useful methods :
 |   Method  |   Description     |
 |   ------  |   ------          |
-|   `void Arrays.sort(cars)` |   Sort any kind of array  |
+|   `void Arrays.sort(cars)`, `void Arrays.sort(T[] array, Comparator<? extends T> comparator)` |   Sort any kind of array  |
 |   `String Arrays.toString(cars)` |   Return elements as string `["a", "b"]`    |
 |   `int Arrays.binarySearch(cars, "Bugatti")`  |   Search for element only if array is sorted, will returns index of match if exits, otherwise returns a negative value (which is the reverse index of where this could be fit in the array)|
 |   `int compare(cars1, cars2)` |   Compare 2 arrays; return (-/+indexOfElementInArray (if both arrays length are equals and first none match of cars1 < cars2 => (- signe, otherwise + signe)  / if arrays length are different return -/+sizeOfTheBiggestArray ),0 if both are equals) `-number => cars1 < cars2 | 0 => cars1 == cars2 | +number => cars1 > cars2` |
-|   `int mismatch()`  | If the arrays are equal, mismatch() returns -1. Otherwise, it returns the first index where they differ  |
+|   `int mismatch(Object[] array1, Object[] array2)`, `int mismatch(Object[] array1, Object[] array2, Comparator<? extends T> comparator)`  | If the arrays are equal, mismatch() returns -1. Otherwise, it returns the first index where they differ  |
 
 > Rules about compare :
 > - If both arrays are the same length and have the same values => the return = 0
@@ -983,8 +983,137 @@ for(Object element: array1) {} // This pass successfuly
 |   `boolean contains(Object object)`   |   Check whether a certain value is in the `ArrayList`. this method calls `equals()` on each element of the `ArrayList`, since String implements `equals()` this works out well. |   `list.contains("Hello"); // return true`    |
 |   `boolean equals(Object object)`  |   ArrayList has a custom implementation of `equals()`, so we can compare 2 lists to see if **they contain the same elements in the same order**, the methods calls `equals` for each element at the same position in both list to compare equality.  |   `list.equals(new ArrayList<>()); // return false`  |
 
+
+### Converting between ARRAY and LIST
+
+#### Convert List to Array
+To convert from a `List` to an `Array`, we use the method `Object[] toArray();`, this will return an <ins>generic array `Object`</ins>, if we want to have a specific type array we should specify the type inside the method`toArray(new Type[size])`, Generally, <ins> we specify a size of 0 to the Type array, The advantage of specifying a size of 0 for the parameter is that Java will create a new array of the proper size for the return value</ins>. If you like, you can suggest a larger array to be used instead. If the ArrayList fits in that array, it will be returned. Otherwise, a new one will be created: 
+
+```java
+List<String> list = new ArrayList<>();
+list.add("hello");
+Object[] genricArray = list.toArray(); // this make a copy of the original list
+String[] stringArray = list.toArray(new String[0]); // this make a copy of the original list
+list.clear(); // now list.size()==0
+System.out.println(genricArray.size()); // print 2
+System.out.println(stringArray.size()); // print 2
+```
+#### Convert Array to List
+There are 2 ways of converting Array to List, each has special behaviour to learn about :
+
+1- Backed list :
+One option is to create a List that is linked to the original array. <ins>When a change is made to one, it is available in the other</ins>. <ins>It is a **fixed-size list**</ins> and is also known as a backed List because the array changes with it: 
+
+```java
+String[] array = { "hello", "world" };     // [hello, world]
+List<String> list = Arrays.asList(array); // return fixed size list, size = 2
+list.set(1, "WORLD"); // [hello, WORLD]
+array[0] = "HELLO"; // [HELLO, WORLD]
+System.out.println(Arrays.toString(array)); // [HELLO, WORLD]
+list.remove(1); // throws UnsupportedOperationException (since it's a fixed size)
+```
+
+2- Immutable list :
+Another option is to create an immutable List. <ins>That means you cannot change the values or the size of the List. You can change the original array, but changes will not be reflected in the immutable List</ins>.
+
+```java
+String[] array = { "hello", "world" };     // [hello, world]
+List<String> list = List.of(array); // return immutable list, with size = 2
+array[0] = "HELLO"; // [HELLO, world]
+System.out.println(list); // [hello, world]
+list.set(1, "WORLD"); // throws UnsupportedOperationException (since it's an immutable list)
+```
+
+#### Using Varargs to Create a List
+You can also use varargs to create list in a simple way using the `List.of(Object... o)` or `Arrays.asList(Object... o)`:
+
+```java
+List<String> cars = Arrays.asList("Mazeratti", "Bugatti"); // Backed list, with fixed size
+List<String> brands = List.of("Nike", "Louis Vuitton"); // Immutable list
+// or also
+List<String> players = List.of({"Messi", "Ronaldo"});
+```
+
+#### Sorting an ArrayList
+This is similar to sorting an `Array` (where we used `Arrays.sort()`). There are 2 methods to sort an ArrayList we can do it :
+
+##### Using `Collections.sort(List)` or `Collections.sort(List, Comparator)`
+The use these methods, the List should be modifiable, but not resizable. Using `Collections.sort(List)` will sort the list in the natural ascending order (since the comparator is null) and the element of the list should implement `Comparable` interface.
+
+##### Using `List#sort(Comparator<? super E> c)` method.
+The use this method, the List should be modifiable, but not resizable. the implementation simply transform the List to an Array and uses `Arrays.sort(T[] array, Comparator c)` behind the scene. if the comparator. If the `Comparator` in argument is null, this will leads to ordering the list in natural order, thus the element of the list must implements the `Comparable` interface.
+
+Examples : 
+```java
+List<String> cars = Arrays.asList("Rolls Royce", "Bugatti");
+List<String> brands = Arrays.asList("Nike", "Louis Vuitton");
+Collection.sort(cars): // ascending, natural order
+brands.sort(null); // ascending, natural order
+System.out.println(cars);
+```
+
+### Creating Sets and Maps
+
+...
+
+
+
 ### WRAPPER CLASSES
+In java each primitive type have a wrapper class, which is an object that corresponds to the primitive :
 
+|   Primitive type  |   Wrapper class   |   Example     |
+|   ----------      |   ----------      |   ----------  |
+|   `boolean`       |   `Boolean`       |   `Boolean.valueOf(true)`     |
+|   `byte`          |   `Byte`          |   `Byte.valueOf((byte)1)`     |
+|   `short`         |   `Short`         |   `Short.valueOf((short)1)`   |
+|   `char`          |   `Character`     |   `Character.valueOf('c')`    |
+|   `int`           |   `Integer`       |   `Integer.valueOf(1)`        |
+|   `long`          |   `Long`          |   `Long.valueOf(1)`           |
+|   `float`          |   `Float`         |   `Float.valueOf((float)1.0)`  | 
+|   `double`        |   `Double`        |   `Double.valueOf(1.0)`       |
 
+#### Wrapper classes methods
+`Wrapper classes` are immutables that encapsulate a the value of a primitive type, and add OO feature to it.
 
+##### <ins>The valueOf method</ins>
+Wrapper classes have some kind of caching capabilities (like `String` class) but only if we use the `valueOf(primitive or string)` method to create the Wrapper class, this method take an `int` or `String` argument and returns the correspending `WrapperClass`, example : 
+
+```java
+Integer price = Integer.valueOf(10_000);
+Integer paw = Integer.valueOf("1");
+Integer paw = Integer.valueOf("10_000"); // RUNTIME ERROR
+```
+
+> Note that `valueOf()` and `intValue()` (for Integer) methods are less used in java because `autoboxing` has removed the need to use them.
+
+##### <ins>The parse method</ins>
+Wrapper classes also provide a method called `parsePrimitive(String)`, which returns **a primitive** from a String, example : 
+
+```java
+int price = Integer.parseInt("10000");
+```
+
+> Note that the Character wrapper class doesn't have a parse method.
+
+### AUTOBOXING and UNBOXING
+Since java 5, we can just assign a primitive value to a wrapper class, and java will convert it to the relevant wrapper class for us; This is called **autoboxing**. The reverse operation is called **unboxing**. Example : 
+
+```java
+Integer cars = 3; // autoboxing
+int numberOfCars = cars; // unboxing
+
+Float price = 10_000.0f;
+float price = price;
+```
+
+> Please be aware of some special cases when using autoboxing, example : 
+```java
+List<Integer> list = new ArrayList<>();
+list.add(1);
+list.add(2);
+list.remove(1); // autoboxing is not performed here, instead this will call the method remove(int index) 
+System.out.println(list); // will print : [1]
+```
+
+In the previous example autoboxing is not performed for integer 1, since there is a method `remove(int index)` that take an int into argument. If we to remove element with value 1 from the list we should force creating a Wrapper class : `list.remove(new Integer(1));`
 
