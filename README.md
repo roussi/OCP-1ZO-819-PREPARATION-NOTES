@@ -4,6 +4,7 @@
 This repository contains complete notes about OCP 1ZO-819 certification, you can contribute to it either adding/updating notes by raising PRs.
 
 ## Resources
+- [EXERCICE NOTES](EXERCICE_NOTES.md)
 
 ### Books
 
