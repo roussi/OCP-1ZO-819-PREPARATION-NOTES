@@ -59,4 +59,45 @@ Note the difference between an inner class and a static nested class. Inner clas
 3- **AN INNER CLASS** is a nested class that **IS NOT EXPLICITLY OR IMPLICITLY DECLARED STATIC**.
 4- A class/interface defined inside an interface is **implicitly static**.
 5- **NESTED CLASSES** doesn have the access to the outer class instance **since it's static**.
+6- An inner class can extend it's outer class.
+7- Member variables of the outer class can be accessibles to the inner class **ONLY IF THEY ARE NOT SHADOWED** in the inner class.
+8- More than one inner class can be associated to the outer class.
+
+### Inheritence 
+Constructors and static initializers are not members and therefore are not inherited.
+
+### If statement
+The only time we can the `=` operator in an `if statement` without having compile/runtime error is when both operands are booleans (since `if(a=b)` get the value that is assigned, thus `if(a=b)` is equivalent to `if(b)`).
+
+The expression (a = b) does not compare the variables a and b, but rather assigns the value of b to the variable a. **The result of the expression is the value being assigned**. Since a and b are boolean variables, the value returned by the expression is also boolean. This allows the expressions to be used as the condition for an if-statement.  if-clause and the else-clause can have empty statements. Empty statement ( i.e. just ; ) is a valid statement. However, the following is illegal:  if (true) else; because the if part doesn't contain any valid statement. (A statement cannot start with an else!) But the following is valid:  if(true) if(false); because if(false); is a valid statement.
+
+### Literals : What does need a casting
+- Conversion from short to char & from char to short (they don't have the same range).
+- Conversion from float to int.
+- conversion from double to long ?
+
+> Further, if you have a final variable and its value fits into a smaller type, then you can assign it without a cast because compiler already knows its value and realizes that it can fit into the smaller type. This is called **implicit narrowing** and is allowed between byte, int, char, and, short but not for long, float, and double.
+
+```java
+byte b = 20;
+final int i = 10;
+b = i; // is OK, since i is final; constant
+
+final float f = 10.0;
+i = f; // will not compile, even after changing 10.0 to 10.0f
+```
+
+### String manipulation
+- `char charAt(int index)`, take int (or lower : char, short, byte), and return the char at the given position starting from 0. It can take up to length-1 as argument. if we pass an invalid index it throws an `IndexOutOfBoundsException` (not necessary a `java.lang.StringIndexOutOfBoundsException`), so pay attention to some question in the exam that could trick you, like :
+> `charAt` throws StringIndexOutOfBoundsException if passed a value higher than or equal to the length of the string (or less than 0).
+
+It is not a valid option because the implementation is free to throw some other exception as long as it is an `IndexOutOfBoundsException`. 
+
+### Functional interface
+Is an interface that contains exaclty **ONE `abstract` method**, and it may contain zero or more default methods and/or static methods in addition to the abstract method. **Functional interfaces** are usefull in the context of lambda expression, since a functional interface contains exactly one abstract method, you can omit the name of that method when you implement it using a lambda expression.
+
+### Scope restriction
+The order of scope restriction is as follow :
+public < protected < package (or default) < private.
+(here, public is least restrictive and private is most restrictive).
 

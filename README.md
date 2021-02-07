@@ -96,6 +96,8 @@ A primitive is just a single value in memory, such as number or character.
 | float    | 32 bit   => require f following the number |
 | double  | 64 bit |
 
+> In Java, the data type used to store characters is `char`. A key point to understand is that Java uses Unicode to represent characters. Unicode defines a fully international character set that can represent all of the characters found in all human languages.
+
 > When a number is declared, example: `int sum;` java will reserve 32 bits memory.
 > We can use long values with capital 'L' (prefered) or 'l' if the value > int ; otherwise we can ommit the suffix ! 
 
@@ -266,10 +268,11 @@ double j = 1/2d; // 1.5
 
 ### Number promotion
 **Rules**
-1. If 2 values have different data types, java will automatically promote one of the values to the larger of the 2 data types.
-2. If one of the values is integral and the other is floating-point, java will automatically promote the integral value to the floating-point value's data type.
-3. Small data types like byte, char, short are first promoted to int any time they're used with a **java binary aritmetic** operator.
+1. If 2 values have different data types, java will automatically promote one of the values to the larger of the 2 data types (if possible).
+2. If one of the values is integral and the other is floating-point, java will automatically promote the integral value to the floating-point value's data type, but not the inverse.
+3. Small data types like byte, char, short are first promoted to int any time they're used with a **java binary aritmetic** operator, so it's preferable to use int rather than byte or short in most cases.
 4. After all promotion has occurred and the operands have the same data type, the resulting value will have the same data type as its promoted operands.
+5. big literals can be promoted to smaller litterals only if they are defined as `final` and if there values fit in the type of smaller litteral.
 
 **example:**
 ```java
@@ -487,7 +490,8 @@ switch(x) {
 ```
 
  - The order of the `default` statement is not important. and it's called **only if there is no matching case** !
- - In case statement, you can use only : literals, enums or `final` constant variables (`final varname = literal`) of **the same type as the variable used in the switch**. Example :
+ - Switch cases should be unique (no case duplication is allowed)
+ - Cases should be **COMPILE TIME CONSTANT**; In case statement, you can use only : literals, enums or `final` constant variables (`final varname = literal`) of **the same type as the variable used in the switch**. Example :
 
  ```java
 final int getCookies() { return 4; }
@@ -520,6 +524,10 @@ switch(size) {
 ```
   The compiler can easily cast small from int to short at compile-time because the value 15 is small enough to fit inside a short. This would not be permitted if small was not a compile-time constant. Likewise, it can convert the expression 1+2 from int to short at compile-time. On the other hand, 1_000_000 is too large to fit inside of short without an explicit cast, so the last case statement does not compile.
 
+  - A switch statement is usually more efficient than a set of nested ifs : this is interesting because it gives insight into how the Java compiler works. When it compiles a switch statement, the Java compiler will inspect each of the case constants and create a “jump table” that it will use for selecting the path of execution depending on the value of the expression. Therefore, if you need to select among a large group of values, a switch statement will run much faster than the equivalent logic coded using a sequence of if-elses. The compiler can do this because it knows that the case constants are all the same type and simply must be compared for equality with the switch expression. The compiler has no such knowledge of a long list of if expressions.
+
+  - Using switch with string expression is to avoid as you can because it's not so effecient.
+
 ### WHILE loop statement
 
 A loop is a repetitive control structure that can execute a statement of code multiple times in succession. A while loop until the boolean expression is not met, example :
@@ -533,6 +541,12 @@ while(counter > 0) {
 ```
 
 If the condition is not satisfied at the first exection, then while loop body will not be invoked (zero execution).
+
+Note that: The body of the while (or any other of Java’s loops) can be empty. This is because a null statement (one that consists only of a semicolon) is syntactically valid in Java.
+
+```java
+while(condition); // is a valid java statement
+```
 
 ### The DO/WHILE statement
 Unlike a while loop, though, a do/while loop guarantees that the statement or block will be executed at least once. 
@@ -607,10 +621,16 @@ OUTER_LOOP: for(int[] row : twodim) {
 
 ```
 
+### The Jump statements (BREAK, CONTINUE, RETURN)
+
 ### The BREAK Statement
+In java a `break` statement has 3 uses:
+ - It terminates a statement sequence in a switch.
+ - It can be used to exit a loop (the innermost loop).
+ - It can be used as a *civilized* form of the goto.
 The `break` statement transfers the flow of control to the enclosing statement.
-- If the break is specified without an optional label, it will terminate the nearest inner loop it is currently in the process of executing !
-- If the break is specified with a label, it will terminate a higher outer loop referenced by this label.
+ - If the break is specified without an optional label, it will terminate the nearest inner loop it is currently in the process of executing !
+ - If the break is specified with a label, it will terminate a higher outer loop referenced by this label.
 
 ```java
 optionalLabel: while(condition) {
@@ -623,6 +643,8 @@ optionalLabel: while(condition) {
 ```
 
 ### The CONTINUE statement
+Sometimes it is useful to force an early iteration of a loop. That is, you might want to continue running the loop but stop processing the remainder of the code in its body for this particular iteration.
+
 The `continue` statement causes flow to finish the execution of **the current loop**.
 
 - If the `continue` is used with an optional Label, it will stop the execution of the current processing and continue (jump) to the next record in the outer loop where the label is present.
@@ -637,6 +659,12 @@ optionalLabel: while(condition) {
     }
 }
 ```
+
+### The RETURN statement 
+The return statement is used to explicitly return from a method. That is, it causes program control to transfer back to the caller of the method. As such, it is categorized as a jump statement.
+
+#### Notes:
+In addition to the jump statements discussed here, Java supports one other way that you can change your program’s flow of execution: through exception handling. Exception handling provides a structured method by which run-time errors can be trapped and handled by your program. It is supported by the keywords try, catch, throw, throws, and finally. In essence, the exception handling mechanism allows your program to perform a nonlocal branch.
 
 ## Chapter 5 : Core java API
 
@@ -770,15 +798,16 @@ System.out.println(a == c); // true (since a and c references the same object)
 
 ### THE STRING POOL
 Since strings are used everywhere in java, they use a lot of memory. This can leads to leak in memory for big applications. Fortunalty java had added the functionality to reuse those repeated strings.
- - The string pool (intern pool) is a location in the JVM where java stocks all these strings.
- - The string pool **contains only literal values (example "hello")**, note that `someObject.toString()` is a string but not a literal string.
+ - The string pool (intern pool) is a location in the JVM where java stocks all **literals and COMPILE TIME CONSTANT strings**.
+ - The string pool **contains only literal values**, note that `someObject.toString()` and `someStringValue += "world"` is a string but not a literal string.
+ - Using concatenation is like calling a method and results a new string.
 
 Common cases: 
 ```java
 String s1 = "Hello World";
 String s2 = "Hello " + "World"; // compile time constant => placed to the string pool if not yet exists as "Hello World". In our case s2 and s1 shares the same string pool reference.
 String s3 = "  Hello Wolrd".trim(); // computed at runtime - isn't the same at compile time
-String s4 = new String("Hello World"); // not a literal value 
+String s4 = new String("Hello World"); // not a literal value - tels the JVM to create a new string object and don't use string pool
 String s5 = "Hello ";
 s5 += "World";
 String s6 = s4.intern(); // looks of this string exist in the string pool
@@ -881,10 +910,12 @@ public void method(String[] args) {}
 public void method(String args[]) {}
 public void method(String... args) {} // this is called varargs (variable argument)
 ```
-The third way is called varargs, and it's similar to the other ways; thus we can treat `args` as a regular array, so we can use `args[0]` and `args.length`.
+The third way is called `varargs`, a feature that was introduced in JDK5 and it's similar to the other ways; thus we can treate `args` as a regular array, so we can use `args[0]` and `args.length`.
 
 ### Multi-dimentional arrays 
 Arrays are objects, and array elements are objects too, so the element it self could be an array, and so on and so forth...
+
+When you allocate memory for a multidimensional array, you need only specify the memory for the first (leftmost) dimension. You can allocate the remaining dimensions separately.
 
 #### <ins>Declaring multidimentional arrays:</ins>
 We can declare multidimentional arrays like so : 
@@ -926,6 +957,8 @@ for (int[] rows : multidimArray) {
   }
 } 
 ```
+
+> *NOTE* Keep in mind that the value of length has nothing to do with the number of elements that are actually in use. It only reflects the number of elements that the array is designed to hold.
 
 ### ArrayList in Java
 Java array have some limitations such as fixed size; in order to use an array you should know its size in advance which is not suitable ! Just like `StringBuilder` (for `String`), an `ArrayList` can change size (capacity) at runtime as needed.
@@ -1118,3 +1151,216 @@ System.out.println(list); // will print : [1]
 
 In the previous example autoboxing is not performed for integer 1, since there is a method `remove(int index)` that take an int into argument. If we to remove element with value 1 from the list we should force creating a Wrapper class : `list.remove(new Integer(1));`
 
+## Chapter 6: CLASSES AND METHODS
+
+### CLASS IN JAVA
+
+#### INTRODUCING ACCESS CONTROL
+one of the features of encapsulation encapsulation is that it links data to the code that manipulates it, another feature is `access control`. Through encapsulation, you can control what parts of a program can access the members of a class. How a member of a class can be accessed is controlled by `access modifiers` atteched to its declaration. 
+Java provides 4 `access modifiers`:
+
+1- `public` : the memeber can be accessed by any other code from anywhere.
+2- `package default` : by default the member of a class is public within its own package. 
+3- `protected` : used in case of inheretence.
+4- `private` : the member can only be accessed by other members of its class.
+
+> NOTE The modules feature added by JDK 9 can also impact accessibility.
+
+Usually, you will want to *restrict access to the data members* of a <ins>class—allowing access only through methods</ins>. Also, there will be times when you will want to define methods that are private to a class.
+
+#### INTRODUCING STATIC
+When using `static` keyword to declare class members or methods of class, they can be accessed/called without the need to create an instance of the class. 
+When using `static` on method there will be some restrictions:
+ - static method can only access other static method.
+ - static method can only use static variables.
+ - static method can't use `this` nor `super`. (since they are features that are specific to instance objects)
+
+> If you need to do some computation to inistialize a `static` variable, you should use `static {}` block that get executed only once.
+
+To call a static variable or method we use the class name followed by the variable or method, exemple : `ClassName.staticMethod()`.
+
+
+#### INTRODUCING FINAL
+`final` is used on variable, method or class. When used on variable it prevent them from being modified (those are called constants). final variables must be intialized, that's possible in 2 ways:
+ - when it's declared.
+ - or within the constructor.
+
+Using `final` on methods, prevent them from being overriding.
+Using `final` on classes, prevent them from being inhereted.
+
+#### NESTED & INNER CLASSES
+It's possible to declare class within another class, such classes are called inner classes. 
+
+<ins>`NESTED CLASSES`</ins>
+Are nested classes that are declared using the `static` keyword are called `NEESTED CLASSES`, they can access instance variable of the outer classes only through an object instance. 
+
+<ins>`INNER CLASSES`</ins>
+Are `non-static` nested classes, they have access to all instance members and methods of the outer class.
+
+> A nested class has access to the members, including private members, of the class in which it is nested. However, <ins>the enclosing class does not have access to the members of the nested class</ins>.
+> An inner class can be instantiated only in the context of outer class, exemple `Outer.Inner innerClass = outerInstance.new Inner()`
+
+```java
+public class Outer {
+  
+  private int outerVar;
+
+  class Inner {
+    private int innerVar;
+
+    public void method() {
+      innerVar = 20;
+      outerVar = 30;
+    }
+  }
+   
+  public static void main(String[] args) {
+    Outer p = new Outer();
+    Inner i = p.new Inner(); // here inner class are used in the context of the outer instance classe
+    i.method();
+    System.out.println("outerVar = " + p.outerVar); // this will display 30
+    System.out.println("innerVar = " + i.innerVar); // this will display 20
+  }
+
+}
+```
+
+
+
+### METHOD IN JAVA
+
+#### ARGUMENT PASSING IN JAVA
+In general, there are 2 ways that a computer language pass arguments to methods : 
+
+1- `Call-by-value`: copie the value of the parameter to a formal parameter of the subroutine;any change made to the parameter subroutine have no effect on the argument.
+2- `Call-by-reference`: a reference to the argument (not the value) is passed to the method, any change made on the reference of the parameter will affect the argument used to call the subroutine.
+
+> Java use `call-by-value` for passing arguments.
+
+*Passing primitives to a method*
+When you pass a primitive type to a method, it is passed by value. Thus, a copy of the argument is made, and what occurs to the parameter that receives the argument has no effect outside the method.
+
+Example: 
+```java 
+
+public static void doubleNumber(int a) {
+    // this will not affect the paramater passed to the method
+    a = a*2;
+}
+public static void main(String[] args) {
+    int a = 4;
+    doubleNumber(a);
+    System.out.print("a = " + a); //This will print 4
+}
+```
+
+*Passing objects to a method*
+When instanciating an object, java creates 2 things; a reference stocked in the `Stack` that references the Object value stocked in the `Heap`. Thus when you pass an object as an arguments to a method you're passing the reference of the object not its value, The parameter that will be created inside the subroutine will also refer to the same object since it's a copy of parameter which is a reference, so finally it's like you are using `Call-by-reference`. One should pay attention when passing objects to methods.
+
+Example:
+```java
+class Product {
+    private String ref;
+    private Double price;
+
+    // constructors, getters and setters
+}
+
+public class Main {
+    public static void doublePrice(Product p) {
+        p.setPrice(p.getPrice()*2);
+    }
+    public static void main(String[] args) {
+        var p= new Product("ref1", 100_000L);
+        System.out.print("product price= " + p.getPrice()); //This will print 200_000L
+    }
+}
+```
+
+> *REMEMBER* When an object reference is passed to a method, the reference itself is passed by use of call-by-value. However, since the value being passed refers to an object, the copy of that value will still refer to the same object that its corresponding argument does.
+
+
+#### RECURSION
+Recursion is the attribute that a method to call itself. a method that call itsvaelf is said to be `recurive`.
+
+Exemple: 
+```java
+public int factorial(int n) {
+    int result;
+    if(n==1) return 1;
+    result = fact(n-1) * n;
+    return result;
+}
+```
+
+> A large number of recursive calls to a method could cause a stack overrun. Because storage for parameters and local variables is on the stack and each new call creates a new copy of these variables, it is possible that the stack could be exhausted. If this occurs, the Java run-time system will cause an exception. However, this is typically not an issue unless a recursive routine runs wild.
+
+ When a method calls itself, new local variables and parameters are allocated storage on the stack, and the method code is executed with these new variables from the start. As each recursive call returns, the old local variables and parameters are removed from the stack, and execution resumes at the point of the call inside the method. Recursive methods could be said to “telescope” out and back.
+
+When writing recursive methods, you must have an if statement somewhere to force the method to return without the recursive call being executed. If you don’t do this, once you call the method, it will never return.
+
+### INHERTENCE
+
+#### Definition
+Inheritance is one of the cornerstones of object-oriented programming because it allows the creation of hierarchical classifications. Using inheritance, you can create a general class that defines traits common to a set of related items. This class can then be inherited by other, more specific classes, each adding those things that are unique to it. In the terminology of Java, a class that is inherited is called a superclass. The class that does the inheriting is called a subclass. Therefore, a subclass is a specialized version of a superclass. It inherits all of the members defined by the superclass and adds its own, unique elements.
+
+#### How to 
+To inherit from a class you simply put the keyword `extends` after subclass declaration and before superclass name, example : 
+
+```java
+class A {
+    // class members 
+}
+class B extends A {
+    // class members
+}
+```
+When doing this, all <ins>protected and public variables and methods of class A will be in available in B</ins>. *private members of class A will not be accessible in class B*
+
+#### Take away 
+ - A subclass will inherit all members and method from superclass, except private ones.
+ - A class can only inherit from one class at a time. Java doesn't support the inheritance of multiple superclasses into a single subclass.
+ - A reference variable of a superclass can be assigned a reference to any subclass derived from that superclass. Exemple : 
+
+ ```java
+ public class Main() {
+     // we declare it as nested class, so that the creation of its instance will not require the presence of the outer instance
+    static class Duck {
+        public boolean canFly() {
+            return true;
+        }
+    }
+    static class RubberDuck extends Duck {
+        @Override
+        public boolean canFly() {
+            return false;
+        }
+    }
+    static class Mallar extends Duck {
+    }
+    public static void main(String[] args) {
+        Duck d = new Mallar();
+        System.out.println(d.canFly()); // will display true
+        d = new RubberDuck();
+        System.out.println(d.canFly()); // will display false
+    }
+ }
+ ```
+
+ #### The use of SUPER
+ 
+ Whenever a subclass needs to refer to its immediate superclass, it can do so by use of the keyword `super`. `super` has 2 general forms:
+    - The first calls the superclass’ constructor. 
+    - The second is used to access a member of the superclass that has been hidden by a member of a subclass. 
+
+##### Using super to Call Superclass Constructors
+A subclass can call a constructor defined by its superclass by use of the following form of super:
+```java
+class SubClass extends SuperClass{
+    private int b;
+    class SubClass() {
+        super(); // must be the first statment in the constructor declaration
+        this.b = 20;
+    }
+}
+```
